@@ -169,51 +169,124 @@ bool is_seed(unsigned int row, unsigned int column) {
     return ((row % 2) && (column % 2));
 }
 
+/* 
+ * Handles making a Depth First Search through the maze and nodes to determine a path.
+ *
+ * TODO: Potential improvements
+ * - Make dfs take arguments for where you want the dfs to start, and validate those arguments
+ * - Keep track of the optimal path for a given start and end coord (assuming they're on the) edges
+ */
 void dfs() {
+    // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
-    // Declare start
-    struct Node start = maze[1][1];     // Start node will always be in location (1, 1)
-    struct Node curr_node = start;
+    // Declare start and current nodes
+    struct Node *start = &maze[1][1];     // Start node will always be in location (1, 1)
+    start->prev = start;
+    struct Node *curr_node = start;
+
 
     // Seed time for rand function
     srand(time(NULL));
 
     do {
+        // Check for path
+        unsigned int* row_offset = malloc(sizeof(unsigned int));
+        unsigned int* col_offset= malloc(sizeof(unsigned int));
 
-        while(curr_node.bit_directs){
-
+        // Whle the current node being examined has unexplored directions
+        while(curr_node->bit_directs) {
+ 
             // Randomly choose a direction (up, down, right, left)
-            unsigned int rand_val = rand() % 4;     // Random value between 0 and 3
+            int rand_val = rand() % 4;     // Random value between 0 and 3
 
+            // Check If this direction explored
+            if (!CHECK_BIT(curr_node->bit_directs, rand_val)) {
+                continue;
+            } 
 
-            // If this direction explored
-            if (CHECK_BIT(curr_node.bit_directs, rand_val)) {
+            // This direction has not been explored. Set as explored
+            curr_node->bit_directs &= ~(1 << rand_val);
 
-            } else {
-                // This direction has not been explored 
-                //
-                // Set as explored
-                //
-                // Check for path
-                //      if path: connect nodes
-                //      else: curr_node = curr_node.parent
+            // Get new row and column coordinates for next node in the direction of exploration
+            if(!get_offsets(row_offset, col_offset, rand_val, *curr_node)) {
+                // If get offsets encounters a wall, continue
+                continue;
             }
-        }
-    } while (!equals(curr_node, start));
 
+            // Fetch next node from maze array
+            struct Node* next_node = &maze[*row_offset][*col_offset];
 
+            if(next_node->is_path ) {
 
+                // If the next node has alreay been processed/added to the path do not process 
+                // further
+                if(next_node->prev != NULL) continue; 
 
-    // Randomly choose start
-    // While end != start
-    //      Check to see if path can be made between two nodes separated by an adjacent node
-    //      If path can be made, connect the two nodes and assign end = node that was connected to
-    //      else assign end = node that came before the current node to backtrack
+                // set prev of the next node to be processed to the curr_node
+                next_node->prev = curr_node;
 
+                // Add connecting node to path
+                if(curr_node->row - next_node->row == 0) {
+                    // Row is shared between curr_node and next_node
+                    int new_col = midpoint(curr_node->col, next_node->col);
+                    maze[*row_offset][new_col].is_path = 1;
+                } else if (curr_node->col - next_node->col == 0) {
+                    // Column is shared between curr_node and next_node
+                    int new_row = midpoint(curr_node->row, next_node->row);
+                    maze[new_row][*col_offset].is_path = 1;
+                }
+
+                // Assign next node to current node and continue to iterate
+                curr_node = &maze[*row_offset][*col_offset];
+            } 
+           } 
+            // Backtrack by looking at the previous node
+            curr_node = curr_node->prev;
+
+            // Cleanup created data
+            free(row_offset);
+            free(col_offset);
+ 
+            
+        } while (!equals(*curr_node, *start));
+    }
+
+/*  Handles finding the midpoint between two points, a and b.
+ */
+int midpoint(int a, int b) {
+    return a + ((b - a) / 2);
 }
 
-/* 
+/* Handles getting offsets from a curr_node based on a rand val. that provides direction of offset.
+ * Populates data into row_offset and col_offset.
+ */ 
+bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
+        struct Node curr_node) {
+
+    char dir = 1 << rand_val;
+    if(dir == 4 && ((curr_node.col - 2) >= 0)) {
+        *row_offset = curr_node.row;
+        *col_offset = curr_node.col - 2;
+    } else if(dir == 8 && ((curr_node.row - 2) >= 0)) {
+        *row_offset = curr_node.row - 2;
+        *col_offset = curr_node.col;
+    } else if(dir == 1 && ((curr_node.col + 2) < rows)) {
+        *row_offset = curr_node.row;
+        *col_offset = curr_node.col + 2;
+    } else if(dir == 2 && ((curr_node.row + 2) < columns)) {
+        *row_offset = curr_node.row + 2;
+        *col_offset = curr_node.col;
+    } else {
+        // Return a failure to populate any offsets
+        return false;
+    }
+
+    // Return successful population of offsets
+    return true;
+}
+
+/*
  * Checks for locational equality between nodes
  * */
 bool equals(struct Node n1, struct Node n2) {

@@ -11,9 +11,9 @@
  * Author: Sabrina Flemming
  * */
 struct Node {
-    void *parent;
-    unsigned int row; 
-    unsigned int col;
+    struct Node* prev;
+    int row; 
+    int col;
     unsigned int is_path;
-    unsigned int bit_directs : 4; // Bit packed field representing directions visted
+    unsigned int bit_directs : 5; // Bit packed field representing directions visted
 };
