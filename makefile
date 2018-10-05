@@ -28,51 +28,43 @@ clean:
 	rm *.o maze
 
 # Testing make rules
-all_test: small_test_square doubles_square medium_test_square large_test_square 
+all_test: small_square_test medium_square_test large_square_test doubles_square_test
 
 # All Valid tests
-small_test_square: maze
+small_square_test: maze
 	$(info Running Small Square test)
-	./maze 7 7 
-medium_test_square: maze
+	./maze 7 
+medium_square_test: maze
 	$(info )
 	$(info Running Medium Square test)
-	./maze 21 21
-large_test_square: maze
+	./maze 21
+large_square_test: maze
 	$(info )
 	$(info Running Large Square test)
-	./maze 75 75
-doubles_square: maze
+	./maze 75
+doubles_square_test: maze
 	$(info )
-	$(info Running Large Square test)
-	./maze 7.2 7.2
+	$(info Running Square test with a double)
+	./maze 7.2
 
 # All invalid tests (run individually)
 even_args_test: maze
 	$(info )
-	$(info Running invalid args test)
-	./maze 6 8
-first_even_args_test: maze
+	$(info Running even args test)
+	./maze 6
+negative_args_test: maze
 	$(info )
-	$(info Running invalid with first arg even test)
-	./maze 6 7 
-second_even_args_test: maze
-	$(info )
-	$(info Running invalid with second arg even test)
-	./maze 7 6
-first_arg_not_convertable: maze
-	$(info )
-	$(info Running invalid with first arg not number)
-	./maze foo 6
-second_arg_not_convertable: maze
+	$(info Running negative args test)
+	./maze  -5
+arg_not_convertable_test: maze
 	$(info )
 	$(info Running invalid with second arg not number)
-	./maze 6 foo
-too_many_args: maze
+	./maze foo
+many_args_test: maze
 	$(info )
 	$(info Running invalid with too many args)
-	./maze 7 7 7 
+	./maze  7 7 
 too_few_args_test: maze
 	$(info )
 	$(info Running too few args test)
-	./maze 3
+	./maze 

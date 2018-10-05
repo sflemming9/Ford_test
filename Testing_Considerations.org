@@ -1,18 +1,14 @@
 * Current Test Cases
 ** Valid tests:
-1. Test ./maze X X where X is an odd number of varying size
-2. Test ./maze X Y where X and Y are two odd numbers of varying size
-3. Test ./maze X Y where X is an even number and Y is an odd number
-4. Test ./maze Y X where Y is an odd number and X is an even number
-5. Test ./maze X Y where X and Y are odd doubles; expected to lose the fractional portion
+1. Test ./maze X where X is an odd number of varying size
+2. Test ./maze Y where Y is an odd double; expected to lose the fractional portion
 
 ** Invalid tests:
-1. Test ./maze X where no second argument is passed, and X is an odd number
-2. Test ./maze X "str" where X Is an odd number and the second argument is not a number
-3. Test ./maze "str" X where the first argument is not a number and X is an odd number
-4. Test ./maze X "str" where X Is an even number and the second argument is not a number
-5. Test ./maze "str" X where the first argument is not a number and X is an even number
-6. Test ./maze X Y Z where X Y are valid odd numbers
+1. Test ./maze X where X is even
+2. Test ./maze "str" where the argument is not a number
+3. Test ./maze X where X is negative
+4. Test ./maze X Y where Y is an extra argument
+5. Test ./maze where no arguments are passed
 
 * Future Testing Considerations
 - A unit testing framework would be a good addition
