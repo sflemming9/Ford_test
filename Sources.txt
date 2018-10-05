@@ -1,0 +1,4 @@
+* Cited sources
+** Bit packed fields
+Bit fields are used to represent an array of booleans (1,0) for a direction having been visited
+https://tutorialspoint.com/cprogramming/c_bit_fields.htm
