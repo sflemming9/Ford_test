@@ -24,7 +24,7 @@ void *memcpy(void *dst, const void *src, size_t n);
  *
  * Returns the number of characters that precede the null-terminator.
  */
-int strlen(const char *s);
+int strslen(const char *s);
 
 /*
  * Lexicographically compare the null-terminated strings `s1` and `s2`.

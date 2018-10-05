@@ -1,6 +1,6 @@
 #include "strings.h"
-#include "printf.h"
-#include "uart.h"
+#include <stdio.h>
+#include <string.h>
 
 #define ZEROASCII 48
 #define NINEASCII 57
@@ -48,7 +48,7 @@ void *memcpy(void *dst, const void *src, size_t n)
 }
 
 /*  This function returns the length of a string */
-int strlen(const char *s)
+int strslen(const char *s)
 {
     /* Implementation a gift to you from lab3 */
     int i;
