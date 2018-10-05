@@ -1,0 +1,20 @@
+* Current Test Cases
+** Valid tests:
+1. Test ./maze X X where X is an odd number of varying size
+2. Test ./maze X Y where X and Y are two odd numbers of varying size
+3. Test ./maze X Y where X is an even number and Y is an odd number
+4. Test ./maze Y X where Y is an odd number and X is an even number
+5. Test ./maze X Y where X and Y are odd doubles; expected to lose the fractional portion
+
+** Invalid tests:
+1. Test ./maze X where no second argument is passed, and X is an odd number
+2. Test ./maze X "str" where X Is an odd number and the second argument is not a number
+3. Test ./maze "str" X where the first argument is not a number and X is an odd number
+4. Test ./maze X "str" where X Is an even number and the second argument is not a number
+5. Test ./maze "str" X where the first argument is not a number and X is an even number
+6. Test ./maze X Y Z where X Y are valid odd numbers
+
+* Future Testing Considerations
+- A unit testing framework would be a good addition
+- Individually testing the functions, rather than just the final executable would be a good next
+  step
