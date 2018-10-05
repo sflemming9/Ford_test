@@ -1,9 +1,14 @@
 /*
- * Handles major functionality for the Maze problem posed by Ford.
+ * Handles major functionality for the Maze generation problem posed by Ford.
+ * A square maze is generated using a depth first search algorithm.
  *
  * High level requirements:
  * 1. Maze must have a solution
  * 2. Maze must have a start and end
+ *
+ * Author: Sabrina Flemming
+ * Date: October 5th, 2018
+ *
  */
 
 /*  Headers */
@@ -19,8 +24,8 @@
 
 /* Global variables */
 static struct Node* maze_ptr; // Stores all the nodes that comprise the maze
-static unsigned int ROWS = 0;
-static unsigned int COLUMNS = 0;
+static unsigned int ROWS = 0;   // Number of rows in the maze
+static unsigned int COLUMNS = 0;    // Number of columns in the maze
 
 /* Function prototypes */
 static bool validateInputs(int argc, char* argv[]);
@@ -39,11 +44,13 @@ static bool is_even(int num);
 
 
 /*
- * Handles running and displaying the maze problem
+ * Handles running and displaying the maze problem. One command line argument is expected (the
+ * size of the square maze). See Compiling_and_Running.org file for further instructions.
  *
- * Author: Sabrina Flemming
- * TODO: Potential improvements
+ * Potential improvements:
  * - Take flags from command line that modify execution (eg: higher amount of logging)
+ * - Handle mazes with an even number of rows and columns
+ * - Handle rectangular size mazes
  */
 int main(int argc, char* argv[]) {
 
@@ -52,7 +59,7 @@ int main(int argc, char* argv[]) {
 
     // Initialize rows and columns; atoi is safe because we handled checking our inputs above
     ROWS = atoi(argv[1]);
-    COLUMNS = atoi(argv[2]);
+    COLUMNS = atoi(argv[1]);
 
     // Initialize the maze
     if (maze_init(ROWS, COLUMNS)) return -1;
@@ -69,31 +76,36 @@ int main(int argc, char* argv[]) {
 }
 
 /*
+ * Function: validateInputs
+ * ----------------------------------------------------------------------
  * Handles validating inputs from the command line.  Returns true if invalid input is encountered.
+ * The command line input is inputted and a bool is returned signifying data has been validated
+ * (true) or inputted data is not correct (false).
  *
- * TODO: Potential improvements
+ * Potential improvements:
  * - Provide warnings for non int/long style data types
  * - Handle for non standard input/mixed data types
- * - Use better function than atoi to perform conversion
+ * - Use better function than atoi to perform conversion (atoi does not have an error call back func)
  */
 static bool validateInputs(int argc, char* argv[]) {
 
     // Check for number of arguments
-    if (argc != 3) {
-        printf("Please pass 2 command line arguments.\n");
+    if (argc != 2) {
+        printf("Please pass 1 command line arguments: the size of the maze.\n");
         return false;
     }
 
     // Convert numbers
     int rows = atoi(argv[1]);
-    int columns = atoi(argv[2]);
+    int columns = atoi(argv[1]);
 
     // Validate conversion produced valid values
-    if (rows <=0 || columns <=0) {
-        printf("Invalid input, please input two positive and odd numbers.\n");
+    if (rows <= 0 || columns <= 0) {
+        printf("Invalid input, please input one positive, odd number.\n");
         return false;
     }
 
+    // Number of rows and columns of maze must be odd
     if ((rows % 2) == 0 || (columns % 2) == 0) {
         printf("Invlaid input, please input an odd number.\n");
         return false;
@@ -103,12 +115,14 @@ static bool validateInputs(int argc, char* argv[]) {
 }
 
 /*
- * Initializes the maze, and all the nodes in it.
+ * Function: maze_init
+ * ----------------------------------------------------------------------
+ * Initializes the maze, and then calls node_init to initialize all the nodes within it.
  */
 static int maze_init() {
 
     // Allocate memory for storing nodes
-    // This memory is not freed because it is required until the program completes
+    // This memory is not freed because it is required until completion of the program
     maze_ptr = (struct Node*)malloc((ROWS * COLUMNS) * sizeof(struct Node));
 
     // Ensure malloc call was sucessful. Return -1 if it was unsuccessful.
@@ -128,8 +142,10 @@ static int maze_init() {
 }
 
 /*
- *  This function prints out the maze. A wall is represented by a '|' and a path is represented
- *  by a space.
+ * Function: print_maze
+ * ----------------------------------------------------------------------
+ * This function prints out the maze. A wall is represented by a '|' and a path is represented
+ * by a space.
  */
 static void print_maze() {
     // Create maze to treat maze_ptr as a multi dimensional array
@@ -151,7 +167,12 @@ static void print_maze() {
 }
 
 /*
- * This function initializes a node at location row,column with the appropriate value.
+ * Function: node_init
+ * ----------------------------------------------------------------------
+ * This function initializes a node at location row,column with the appropriate value. The nodes are
+ * differentiated on whether or not they are a 'seed node'. A seed node is a node that has odd
+ * numbers for its row,column and is also not along the edges of the maze. This creates a
+ * checkerboard type maze to allow for dfs to generate a full maze. 
  */
 static void node_init(unsigned int row, unsigned int column) {
 
@@ -161,32 +182,44 @@ static void node_init(unsigned int row, unsigned int column) {
     // Assign the location of the node
     maze[row][column].row = row;
     maze[row][column].col = column;
+    
+    maze[row][column].bit_directs = 15;     // Initialize all directions as visited
 
     // Check if a Node is a seed, and assign values accordingly
     if (is_seed(row, column)) {
         maze[row][column].is_path = 1;
-        maze[row][column].bit_directs = 15;     // Initialize all directions as unvisited
     } else {
         maze[row][column].is_path = 0;
-        maze[row][column].bit_directs = 15;     // Initialize all directions as visited
     }
 }
 
 /*
- *  A seed node is a node located on an odd row and odd column. It is necessary to seed the
- *  matrix in this manner so that a DFS can be performed without creating large open blocks in the
- *  maze, and ensuring that a solution can always be found for a given start and end.
+ * Function: is_seed
+ * ----------------------------------------------------------------------
+ * A seed node is a node located on an odd row and odd column. It is necessary to seed the
+ * matrix in this manner so that a DFS can be performed without creating large open blocks in the
+ * maze, and ensuring that a solution can always be found for a given start and end.
  */
 static bool is_seed(unsigned int row, unsigned int column) {
     return ((row % 2) && (column % 2));
 }
 
 /*
- * Handles making a Depth First Search through the maze and nodes to determine a path.
+ * Function: dfs
+ * ----------------------------------------------------------------------
+ * Handles making a Depth First Search through the maze and nodes to determine a path in order to
+ * generate a maze. Depth First Search starts at a single node and explores a path with one of its
+ * neighbours. If a path is possible in this direction, it will move forward resulting in the
+ * neighbour becoming the new start point. This cycle is continued until a dead end is reached (all
+ * of the neighbours are either edges or have already been explored). The algorithm then backtracks
+ * all the way back to the original start node and checks if there are any other directions in which
+ * it can pursue a path.
  *
- * TODO: Potential improvements
+ * Potential improvements:
  * - Make dfs take arguments for where you want the dfs to start, and validate those arguments
  * - Keep track of the optimal path for a given start and end coord (assuming they're on the) edges
+ * - Further decomposition
+ * - Structure function in such a way that makes it easier to test
  */
 static void dfs() {
     // Create maze to treat maze_ptr as a multi dimensional array
