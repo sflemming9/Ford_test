@@ -107,11 +107,52 @@ bool is_seed(unsigned int row, unsigned int column) {
 }
 
 void dfs() {
-    // Declare start and end
+    struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
+
+    // Declare start
+    struct Node start = maze[1][1];     // Start node will always be in location (1, 1)
+    struct Node curr_node = start;
+
+    // Seed time for rand function
+    srand(time(NULL));
+
+    do {
+
+        while(curr_node.bit_directs){
+
+            // Randomly choose a direction (up, down, right, left)
+            unsigned int rand_val = rand() % 4;     // Random value between 0 and 3
+
+
+            // If this direction explored
+            if (CHECK_BIT(curr_node.bit_directs, rand_val)) {
+
+            } else {
+                // This direction has not been explored 
+                //
+                // Set as explored
+                //
+                // Check for path
+                //      if path: connect nodes
+                //      else: curr_node = curr_node.parent
+            }
+        }
+    } while (!equals(curr_node, start));
+
+
+
+
     // Randomly choose start
     // While end != start
     //      Check to see if path can be made between two nodes separated by an adjacent node
     //      If path can be made, connect the two nodes and assign end = node that was connected to
     //      else assign end = node that came before the current node to backtrack
 
+}
+
+/* 
+ * Checks for locational equality between nodes
+ * */
+bool equals(struct Node n1, struct Node n2) {
+    return n1.row == n2.row && n1.col == n2.col;
 }
