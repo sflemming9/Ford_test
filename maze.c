@@ -311,8 +311,8 @@ void set_start_end() {
     do {
         start_row = (rand() % 2) ? 0 : rows - 1;
         start_col = rand() % columns;
-    } while (is_corner(start_row, start_col));    // Do not want to place start in a corner 
-        
+    } while (is_corner(start_row, start_col));    // Do not want to place start in a corner
+
 
     int end_row;
     int end_col;
@@ -326,12 +326,12 @@ void set_start_end() {
     maze[end_row][end_col].is_path = 1;
 }
 
-/*  
+/*
  *  This function will return true if the inputted row,col coordinates correspond to a corner in the
  *  maze.
  */
 bool is_corner(int row, int col) {
-    return (((row == 0) && (col == 0)) || ((row = rows - 1) && (col == 0)) 
-            || ((row == 0) && (col == columns - 1)) 
+    return (((row == 0) && (col == 0)) || ((row == rows - 1) && (col == 0))
+            || ((row == 0) && (col == columns - 1))
             || ((rows == rows - 1) && (col == columns - 1)));
 }
