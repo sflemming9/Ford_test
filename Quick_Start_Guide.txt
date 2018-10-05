@@ -6,3 +6,11 @@ make all_test
 * Reading Documentation
 Documentation has been provided in the form of inline documentation, as well as provided .org files 
 (a common text markup format) that can be opened and read as though they were text files.
+
+*Language Choice
+The C programming language was primarily chosen because the Software Research Engineer position
+to which I am applying to will use C. I wanted to showcase my abilities to work with a low level
+programming language as this is likely what I would have to do if given the opportunity to work at
+Ford. This assignment would have been significantly easier in a modern object oriented language such
+as C++ or Python due to the use of prebuilt, dynamically sized, data structures such as stacks,
+queues, and vectors. 

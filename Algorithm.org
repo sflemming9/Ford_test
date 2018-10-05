@@ -1,4 +1,8 @@
 * General Algorithm For Maze Generation
+
+Depth first search was chosen over Kruskal's as Kruskal's works with a weighted graph and works
+best with the priority queue data structure.
+
 1. Take command line input of rows and columns
 2. Validate inputs
     - Right number of arguments, are they convertable to strings?

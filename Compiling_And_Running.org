@@ -11,12 +11,11 @@ the console.
 
 * Testing
 See Testing_Considerations.org for more information on test cases. Valid test cases may be ran with
-"make all_test" invalid tests must be run individually. For sake of time only simple makefile test
+"make all_test", invalid tests must be run individually. For sake of time only simple makefile test
 cases were written as I am not familiar with a good C testing framework, and the reccommended time
 budget for the assignment did not allow me sufficient time to learn one. In the future I would 
-prioritize unit and functional testing given adequate time before the deadline. The makefile is used
-to run test cases due to it's ease of use, and that it was to be found on most computers that this 
-program could be ran on.
+prioritize unit and functional testing. The makefile is used to run test cases due to it's ease 
+of use, and that it was to be found on most computers that this program could be ran on.
 
 * Compiling
 The project is compiled using the provided makefile to build object files that are then compiled
