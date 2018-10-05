@@ -3,7 +3,7 @@
 # Author: Sabrina Flemming
 CC=gcc
 CFLAGS=-I -Wall -std=c99 -g
-OBJS=maze.o strings.o
+OBJS=maze.o
 
 # Build complete executable
 all: maze
@@ -15,9 +15,6 @@ maze: $(OBJS)
 # Build maze object file
 maze.o: maze.c 
 	$(CC) $(CFLAGS) -c maze.c
-
-strings.o: strings.c strings.h 
-	$(CC) $(CFLAGS) -c strings.c 
 
 node.o: node.h
 	$(CC) $(CFLAGS) -c node.h
