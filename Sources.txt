@@ -2,3 +2,11 @@
 ** Bit packed fields
 Bit fields are used to represent an array of booleans (1,0) for a direction having been visited
 https://tutorialspoint.com/cprogramming/c_bit_fields.htm
+
+** Random number generation
+Random number is used to pick a random direction of travel
+https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-C
+
+** Macro for bit checking
+CHECK_BIT is used check if a certain bit of a bit packed value is set
+https://stackoverflow.com/questions/523724/c-c-check-if-one-bit-is-set-in-i-e-int-variable
