@@ -1,6 +1,8 @@
 * Compiling
 Please use the provided makefile. The command "make" will compile an executable of the project.
-"make clean" provides the usual behaviour of erasing all compiled files.
+"make clean" provides the usual behaviour of erasing all compiled files. The makefile was structed
+in such a way that it would be able to support a project with increased dependency and complexity in
+the future.
 
 * Running 
 The program accepts two command line arguments as the rows and columns you want the maze to have. 
