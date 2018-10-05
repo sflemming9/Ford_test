@@ -19,8 +19,8 @@
 
 /* Global variables */
 static struct Node* maze_ptr; // Stores all the nodes that comprise the maze
-static unsigned int rows = 0;
-static unsigned int columns = 0;
+static unsigned int ROWS = 0;
+static unsigned int COLUMNS = 0;
 
 /* Function prototypes */
 static bool validateInputs(int argc, char* argv[]);
@@ -51,11 +51,11 @@ int main(int argc, char* argv[]) {
     if (!validateInputs(argc, argv)) return -1;
 
     // Initialize rows and columns; atoi is safe because we handled checking our inputs above
-    rows = atoi(argv[1]);
-    columns = atoi(argv[2]);
+    ROWS = atoi(argv[1]);
+    COLUMNS = atoi(argv[2]);
 
     // Initialize the maze
-    if (maze_init(rows, columns)) return -1;
+    if (maze_init(ROWS, COLUMNS)) return -1;
 
     // Apply a Depth First Search to generate a maze from initialized data
     dfs();
@@ -109,17 +109,17 @@ static int maze_init() {
 
     // Allocate memory for storing nodes
     // This memory is not freed because it is required until the program completes
-    maze_ptr = (struct Node*)malloc((rows * columns) * sizeof(struct Node));
+    maze_ptr = (struct Node*)malloc((ROWS * COLUMNS) * sizeof(struct Node));
 
     // Ensure malloc call was sucessful. Return -1 if it was unsuccessful.
     if (maze_ptr == NULL) return -1;
 
     // Create maze to treat maze_ptr as a multi dimensional array
-    struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
+    struct Node (*maze)[COLUMNS] = (struct Node (*)[COLUMNS])(maze_ptr);
 
     // Initialize all Nodes in the maze array
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < columns; c++)  {
+    for (int r = 0; r < ROWS; r++) {
+        for (int c = 0; c < COLUMNS; c++)  {
             node_init(r, c);
         }
     }
@@ -133,11 +133,11 @@ static int maze_init() {
  */
 static void print_maze() {
     // Create maze to treat maze_ptr as a multi dimensional array
-    struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
+    struct Node (*maze)[COLUMNS] = (struct Node (*)[COLUMNS])(maze_ptr);
 
     // Iterate through maze and print the character associated with is_path
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < columns; c++)  {
+    for (int r = 0; r < ROWS; r++) {
+        for (int c = 0; c < COLUMNS; c++)  {
             if (maze[r][c].is_path) {
                 // Print path character
                 printf(" ");
@@ -156,7 +156,7 @@ static void print_maze() {
 static void node_init(unsigned int row, unsigned int column) {
 
     // Create maze to treat maze_ptr as a multi dimensional array
-    struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
+    struct Node (*maze)[COLUMNS] = (struct Node (*)[COLUMNS])(maze_ptr);
 
     // Assign the location of the node
     maze[row][column].row = row;
@@ -190,7 +190,7 @@ static bool is_seed(unsigned int row, unsigned int column) {
  */
 static void dfs() {
     // Create maze to treat maze_ptr as a multi dimensional array
-    struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
+    struct Node (*maze)[COLUMNS] = (struct Node (*)[COLUMNS])(maze_ptr);
 
     // Declare start and current nodes
     struct Node *start = &maze[1][1];     // Start node will always be in location (1, 1)
@@ -250,9 +250,9 @@ static void dfs() {
         // Backtrack by looking at the previous node
         curr_node = curr_node->prev;
 
-    // Cleanup created data
-    free(row_offset);
-    free(col_offset);
+        // Cleanup created data
+        free(row_offset);
+        free(col_offset);
 
     } while (!equals(*curr_node, *start));
 }
@@ -277,10 +277,10 @@ static bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsi
     } else if(rand_val == 3 && ((curr_node.row - 2) >= 0)) {
         *row_offset = curr_node.row - 2;
         *col_offset = curr_node.col;
-    } else if(rand_val == 0 && ((curr_node.col + 2) < rows)) {
+    } else if(rand_val == 0 && ((curr_node.col + 2) < ROWS)) {
         *row_offset = curr_node.row;
         *col_offset = curr_node.col + 2;
-    } else if(rand_val == 1 && ((curr_node.row + 2) < columns)) {
+    } else if(rand_val == 1 && ((curr_node.row + 2) < COLUMNS)) {
         *row_offset = curr_node.row + 2;
         *col_offset = curr_node.col;
     } else {
@@ -301,7 +301,7 @@ static bool equals(struct Node n1, struct Node n2) {
 
 static void set_start_end() {
     // Create maze to treat maze_ptr as a multi dimensional array
-    struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
+    struct Node (*maze)[COLUMNS] = (struct Node (*)[COLUMNS])(maze_ptr);
 
     // Seed time for rand function
     srand(time(NULL));
@@ -310,8 +310,8 @@ static void set_start_end() {
     int start_col;
 
     do {
-        start_row = (rand() % 2) ? 0 : rows - 1;
-        start_col = rand() % columns;
+        start_row = (rand() % 2) ? 0 : ROWS - 1;
+        start_col = rand() % COLUMNS;
     } while (is_corner(start_row, start_col) || (is_even(start_col)));    // Do not want to place start in a corner
 
 
@@ -319,8 +319,8 @@ static void set_start_end() {
     int end_col;
 
     do {
-        end_row = rand() % rows;
-        end_col = (rand() % 2) ? 0 : columns - 1;
+        end_row = rand() % ROWS;
+        end_col = (rand() % 2) ? 0 : COLUMNS - 1;
     } while (is_corner(end_row, end_col) || (is_even(end_row)));      // Do not want to place end in a corner
 
     maze[start_row][start_col].is_path = 1;
@@ -332,9 +332,9 @@ static void set_start_end() {
  *  maze.
  */
 static bool is_corner(int row, int col) {
-    return (((row == 0) && (col == 0)) || ((row == rows - 1) && (col == 0))
-            || ((row == 0) && (col == columns - 1))
-            || ((rows == rows - 1) && (col == columns - 1)));
+    return (((row == 0) && (col == 0)) || ((row == ROWS - 1) && (col == 0))
+            || ((row == 0) && (col == COLUMNS - 1))
+            || ((row == ROWS - 1) && (col == COLUMNS - 1)));
 }
 
 static bool is_even(int num) {
