@@ -1,0 +1,14 @@
+* Compiling
+Please use the provided makefile. The command "make" will compile an executable of the project.
+"make clean" provides the usual behaviour of erasing all compiled files.
+
+* Running 
+The program accepts two command line arguments as the rows and columns you want the maze to have. 
+Rows and columns must be odd, non negative numbers.
+
+* Testing
+See TestCases.txt for more information on test cases. Valid test cases may be ran with
+"make all_test" invalid tests must be run individually. For sake of time only simple makefile test
+cases were written and I am not familiar with a good C testing framework, and the reccommended time
+budget for the assignment did not allow me to learn one. In the future I would prioritize unit and
+functional testing given adequate time before the deadline.

@@ -1,7 +1,7 @@
-/* 
+/*
  * Handles major functionality for the Maze problem posed by Ford.
  *
- * High level requirements: 
+ * High level requirements:
  * 1. Maze must have a solution
  * 2. Maze must have a start and end
  */
@@ -15,7 +15,7 @@
 
 /* Macros */
 /* Checks if a bit has been set. Returns true if it has, false if it hasn't. */
-#define CHECK_BIT(var, pos) (var & (1 << pos)) 
+#define CHECK_BIT(var, pos) (var & (1 << pos))
 
 /* Global variables */
 static struct Node* maze_ptr; // Stores all the nodes that comprise the maze
@@ -33,9 +33,11 @@ bool equals(struct Node n1, struct Node n2);
 bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
         struct Node curr_node);
 int midpoint(int a, int b);
+void set_start_end();
+bool is_corner(int row, int col);
 
 
-/* 
+/*
  * Handles running and displaying the maze problem
  *
  * Author: Sabrina Flemming
@@ -58,24 +60,23 @@ int main(int argc, char* argv[]) {
     dfs();
 
     // Set start and end to maze solution
-    //set_start();
-    //set_end();
+    set_start_end();
 
     print_maze();
 
     return 0;
 }
 
-/* 
+/*
  * Handles validating inputs from the command line.  Returns true if invalid input is encountered.
  *
  * TODO: Potential improvements
  * - Provide warnings for non int/long style data types
- * - Handle for non standard input/mixed data types 
+ * - Handle for non standard input/mixed data types
  * - Use better function than atoi to perform conversion
  */
 bool validateInputs(int argc, char* argv[]) {
-    
+
     // Check for number of arguments
     if (argc != 3) {
         printf("Please pass 2 command line arguments.\n");
@@ -100,12 +101,13 @@ bool validateInputs(int argc, char* argv[]) {
     return true;
 }
 
-/* 
+/*
  * Initializes the maze, and all the nodes in it.
  */
 int maze_init() {
 
     // Allocate memory for storing nodes
+    // This memory is not freed because it is required until the program completes
     maze_ptr = (struct Node*)malloc((rows * columns) * sizeof(struct Node));
 
     // Ensure malloc call was sucessful. Return -1 if it was unsuccessful.
@@ -151,7 +153,7 @@ void print_maze() {
  * This function initializes a node at location row,column with the appropriate value.
  */
 void node_init(unsigned int row, unsigned int column) {
-    
+
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
@@ -178,7 +180,7 @@ bool is_seed(unsigned int row, unsigned int column) {
     return ((row % 2) && (column % 2));
 }
 
-/* 
+/*
  * Handles making a Depth First Search through the maze and nodes to determine a path.
  *
  * TODO: Potential improvements
@@ -204,7 +206,7 @@ void dfs() {
 
         // Whle the current node being examined has unexplored directions
         while (curr_node->bit_directs) {
- 
+
             // Randomly choose a direction (up, down, right, left)
             int rand_val = rand() % 4;     // Random value between 0 and 3
 
@@ -224,7 +226,7 @@ void dfs() {
             if (next_node->is_path) {
 
                 // If the next node has alreay been added to the path do not process further
-                if(next_node->prev != NULL) continue; 
+                if(next_node->prev != NULL) continue;
 
                 // Set prev of the next node to be the curr_node
                 next_node->prev = curr_node;
@@ -242,43 +244,42 @@ void dfs() {
 
                 // Assign next node to current node and continue to iterate
                 curr_node = &maze[*row_offset][*col_offset];
-            } 
-        } 
+            }
+        }
         // Backtrack by looking at the previous node
         curr_node = curr_node->prev;
 
     // Cleanup created data
     free(row_offset);
     free(col_offset);
-            
+
     } while (!equals(*curr_node, *start));
 }
 
-/*  
+/*
  *  Handles finding the midpoint between two integers, a and b.
  */
 int midpoint(int a, int b) {
     return a + ((b - a) / 2);
 }
 
-/* 
+/*
  * Handles getting offsets from a curr_node based on a rand val. that provides direction of offset.
  * Populates data into row_offset and col_offset.
- */ 
+ */
 bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
         struct Node curr_node) {
 
-    char dir = 1 << rand_val;
-    if(dir == 4 && ((curr_node.col - 2) >= 0)) {
+    if (rand_val == 2  && ((curr_node.col - 2) >= 0)) {
         *row_offset = curr_node.row;
         *col_offset = curr_node.col - 2;
-    } else if(dir == 8 && ((curr_node.row - 2) >= 0)) {
+    } else if(rand_val == 3 && ((curr_node.row - 2) >= 0)) {
         *row_offset = curr_node.row - 2;
         *col_offset = curr_node.col;
-    } else if(dir == 1 && ((curr_node.col + 2) < rows)) {
+    } else if(rand_val == 0 && ((curr_node.col + 2) < rows)) {
         *row_offset = curr_node.row;
         *col_offset = curr_node.col + 2;
-    } else if(dir == 2 && ((curr_node.row + 2) < columns)) {
+    } else if(rand_val == 1 && ((curr_node.row + 2) < columns)) {
         *row_offset = curr_node.row + 2;
         *col_offset = curr_node.col;
     } else {
@@ -295,4 +296,42 @@ bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned in
  */
 bool equals(struct Node n1, struct Node n2) {
     return n1.row == n2.row && n1.col == n2.col;
+}
+
+void set_start_end() {
+    // Create maze to treat maze_ptr as a multi dimensional array
+    struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
+
+    // Seed time for rand function
+    srand(time(NULL));
+
+    int start_row;
+    int start_col;
+
+    do {
+        start_row = (rand() % 2) ? 0 : rows - 1;
+        start_col = rand() % columns;
+    } while (is_corner(start_row, start_col));    // Do not want to place start in a corner 
+        
+
+    int end_row;
+    int end_col;
+
+    do {
+        end_row = rand() % rows;
+        end_col = (rand() % 2) ? 0 : columns - 1;
+    } while (is_corner(end_row, end_col));      // Do not want to place end in a corner
+
+    maze[start_row][start_col].is_path = 1;
+    maze[end_row][end_col].is_path = 1;
+}
+
+/*  
+ *  This function will return true if the inputted row,col coordinates correspond to a corner in the
+ *  maze.
+ */
+bool is_corner(int row, int col) {
+    return (((row == 0) && (col == 0)) || ((row = rows - 1) && (col == 0)) 
+            || ((row == 0) && (col == columns - 1)) 
+            || ((rows == rows - 1) && (col == columns - 1)));
 }
