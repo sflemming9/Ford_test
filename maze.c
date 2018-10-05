@@ -14,8 +14,7 @@
 #include "node.h"
 
 /* Macros */
-/* 
- * Checks if a bit has been set. Returns true if it has, false if it hasn't*/
+/* Checks if a bit has been set. Returns true if it has, false if it hasn't. */
 #define CHECK_BIT(var, pos) (var & (1 << pos)) 
 
 /* Global variables */
@@ -36,7 +35,8 @@ bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned in
 int midpoint(int a, int b);
 
 
-/* Handles running and displaying the maze problem
+/* 
+ * Handles running and displaying the maze problem
  *
  * Author: Sabrina Flemming
  * TODO: Potential improvements
@@ -45,7 +45,7 @@ int midpoint(int a, int b);
 int main(int argc, char* argv[]) {
 
     // Validate inputs for correct number of arguments, convertability, 0, negative, and size
-    if(!validateInputs(argc, argv)) return -1;
+    if (!validateInputs(argc, argv)) return -1;
 
     // Initialize rows and columns; atoi is safe because we handled checking our inputs above
     rows = atoi(argv[1]);
@@ -57,12 +57,17 @@ int main(int argc, char* argv[]) {
     // Apply a Depth First Search to generate a maze from initialized data
     dfs();
 
+    // Set start and end to maze solution
+    //set_start();
+    //set_end();
+
     print_maze();
 
     return 0;
 }
 
-/* Handles validating inputs from the command line.  Returns true if invalid input is encountered.
+/* 
+ * Handles validating inputs from the command line.  Returns true if invalid input is encountered.
  *
  * TODO: Potential improvements
  * - Provide warnings for non int/long style data types
@@ -70,10 +75,11 @@ int main(int argc, char* argv[]) {
  * - Use better function than atoi to perform conversion
  */
 bool validateInputs(int argc, char* argv[]) {
+    
     // Check for number of arguments
-    if(argc != 3) {
-        printf("Please pass 2 command line arguments\n");
-        return true;
+    if (argc != 3) {
+        printf("Please pass 2 command line arguments.\n");
+        return false;
     }
 
     // Convert numbers
@@ -81,27 +87,28 @@ bool validateInputs(int argc, char* argv[]) {
     int columns = atoi(argv[2]);
 
     // Validate conversion produced valid values
-    if(rows <=0 || columns <=0) {
-        printf("Invalid input, please input two positive and even numbers");
+    if (rows <=0 || columns <=0) {
+        printf("Invalid input, please input two positive and odd numbers.\n");
         return false;
     }
 
-    if((rows % 2) == 0 || (columns % 2) == 0) {
-        printf("Invlaid input, please input an odd number");
+    if ((rows % 2) == 0 || (columns % 2) == 0) {
+        printf("Invlaid input, please input an odd number.\n");
         return false;
     }
 
     return true;
 }
 
-/* Initializes the maze, and all the nodes in it
+/* 
+ * Initializes the maze, and all the nodes in it.
  */
 int maze_init() {
 
     // Allocate memory for storing nodes
     maze_ptr = (struct Node*)malloc((rows * columns) * sizeof(struct Node));
 
-    // Ensure malloc call was sucessful. Return -1 if it was unsuccessful
+    // Ensure malloc call was sucessful. Return -1 if it was unsuccessful.
     if (maze_ptr == NULL) return -1;
 
     // Create maze to treat maze_ptr as a multi dimensional array
@@ -114,7 +121,6 @@ int maze_init() {
         }
     }
 
-    // Return success
     return 0;
 }
 
@@ -129,7 +135,7 @@ void print_maze() {
     // Iterate through maze and print the character associated with is_path
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < columns; c++)  {
-            if(maze[r][c].is_path) {
+            if (maze[r][c].is_path) {
                 // Print path character
                 printf(" ");
             } else {
@@ -142,21 +148,24 @@ void print_maze() {
 }
 
 /*
- * This function initializes a node with the appropriate value.
+ * This function initializes a node at location row,column with the appropriate value.
  */
 void node_init(unsigned int row, unsigned int column) {
     
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
+    // Assign the location of the node
+    maze[row][column].row = row;
+    maze[row][column].col = column;
+
     // Check if a Node is a seed, and assign values accordingly
     if (is_seed(row, column)) {
-        maze[row][column].row = row;
-        maze[row][column].col = column;
         maze[row][column].is_path = 1;
-        maze[row][column].bit_directs = 15;
+        maze[row][column].bit_directs = 15;     // Initialize all directions as unvisited
     } else {
         maze[row][column].is_path = 0;
+        maze[row][column].bit_directs = 15;     // Initialize all directions as visited
     }
 }
 
@@ -185,7 +194,6 @@ void dfs() {
     start->prev = start;
     struct Node *curr_node = start;
 
-
     // Seed time for rand function
     srand(time(NULL));
 
@@ -195,35 +203,30 @@ void dfs() {
         unsigned int* col_offset= malloc(sizeof(unsigned int));
 
         // Whle the current node being examined has unexplored directions
-        while(curr_node->bit_directs) {
+        while (curr_node->bit_directs) {
  
             // Randomly choose a direction (up, down, right, left)
             int rand_val = rand() % 4;     // Random value between 0 and 3
 
             // Check If this direction explored
-            if (!CHECK_BIT(curr_node->bit_directs, rand_val)) {
-                continue;
-            } 
+            if (!CHECK_BIT(curr_node->bit_directs, rand_val)) continue;
 
             // This direction has not been explored. Set as explored
             curr_node->bit_directs &= ~(1 << rand_val);
 
             // Get new row and column coordinates for next node in the direction of exploration
-            if(!get_offsets(row_offset, col_offset, rand_val, *curr_node)) {
-                // If get offsets encounters a wall, continue
-                continue;
-            }
+            // If getOfsset encounters a wall (returns false), continue
+            if (!get_offsets(row_offset, col_offset, rand_val, *curr_node)) continue;
 
             // Fetch next node from maze array
             struct Node* next_node = &maze[*row_offset][*col_offset];
 
-            if(next_node->is_path ) {
+            if (next_node->is_path) {
 
-                // If the next node has alreay been processed/added to the path do not process 
-                // further
+                // If the next node has alreay been added to the path do not process further
                 if(next_node->prev != NULL) continue; 
 
-                // set prev of the next node to be processed to the curr_node
+                // Set prev of the next node to be the curr_node
                 next_node->prev = curr_node;
 
                 // Add connecting node to path
@@ -240,25 +243,26 @@ void dfs() {
                 // Assign next node to current node and continue to iterate
                 curr_node = &maze[*row_offset][*col_offset];
             } 
-           } 
-            // Backtrack by looking at the previous node
-            curr_node = curr_node->prev;
+        } 
+        // Backtrack by looking at the previous node
+        curr_node = curr_node->prev;
 
-            // Cleanup created data
-            free(row_offset);
-            free(col_offset);
- 
+    // Cleanup created data
+    free(row_offset);
+    free(col_offset);
             
-        } while (!equals(*curr_node, *start));
-    }
+    } while (!equals(*curr_node, *start));
+}
 
-/*  Handles finding the midpoint between two points, a and b.
+/*  
+ *  Handles finding the midpoint between two integers, a and b.
  */
 int midpoint(int a, int b) {
     return a + ((b - a) / 2);
 }
 
-/* Handles getting offsets from a curr_node based on a rand val. that provides direction of offset.
+/* 
+ * Handles getting offsets from a curr_node based on a rand val. that provides direction of offset.
  * Populates data into row_offset and col_offset.
  */ 
 bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
@@ -288,7 +292,7 @@ bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned in
 
 /*
  * Checks for locational equality between nodes
- * */
+ */
 bool equals(struct Node n1, struct Node n2) {
     return n1.row == n2.row && n1.col == n2.col;
 }
