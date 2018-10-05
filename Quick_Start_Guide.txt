@@ -1,0 +1,8 @@
+* To run the Code: these lines may be executed on any linux based terminal
+make; ./maze 5
+
+make all_test
+
+* Reading Documentation
+Documentation has been provided in the form of inline documentation, as well as provided .org files 
+(a common text markup format) that can be opened and read as though they were text files.

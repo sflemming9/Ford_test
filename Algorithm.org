@@ -1,0 +1,20 @@
+* General Algorithm For Maze Generation
+1. Take command line input of rows and columns
+2. Validate inputs
+    - Right number of arguments, are they convertable to strings?
+    - Are they convertable/right type/not too large/not 0, not negative, not empty?
+3. Treat each point in a row x column grid as a point in the maze, through which we dig
+    a tunnel using Depth First Search (DFS)
+4. Initialize a two-dimensional array to represent all the nodes in the array
+    - Allocate memory. Make sure memory was allocated properly
+    - Populate array of Nodes that track their row, column, parent (previous node), and 
+        directions visted (use bit packing)
+5. Pick a node to start at
+6. While all nodes have not been visted chain nodes together by
+    - While all directions have not been visted from a node:
+        1. Randomly pick a direction and mark it as explored (if it has not already been explored)
+        2. Depending on the direction chosen check for a direciton that it is possible to go
+    - Make sure the direction chosen does not lead into an edge or already have a parent
+    = Return node in direction chosen or parent's address if it has no other options. Returning the
+    address of parent will break out of this loop once all nodes have been visted
+
