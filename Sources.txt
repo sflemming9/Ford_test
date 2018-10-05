@@ -10,3 +10,7 @@ https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-C
 ** Macro for bit checking
 CHECK_BIT is used check if a certain bit of a bit packed value is set
 https://stackoverflow.com/questions/523724/c-c-check-if-one-bit-is-set-in-i-e-int-variable
+
+** Maze generation algorithm
+This link provided general information on various maze generating algorithms, including DFS
+https://en.wikipedia.org/wiki/Maze_generation_algorithm
