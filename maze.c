@@ -331,8 +331,12 @@ static void set_start_end() {
  *  This function will return true if the inputted row,col coordinates correspond to a corner in the
  *  maze.
  */
-bool is_corner(int row, int col) {
+static bool is_corner(int row, int col) {
     return (((row == 0) && (col == 0)) || ((row == rows - 1) && (col == 0))
             || ((row == 0) && (col == columns - 1))
             || ((rows == rows - 1) && (col == columns - 1)));
+}
+
+static bool is_even(int num) {
+    return !(num % 2);
 }
