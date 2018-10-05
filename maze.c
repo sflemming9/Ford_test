@@ -54,31 +54,67 @@ int main(int argc, char* argv[]) {
     // Initialize the maze
     if (maze_init(rows, columns)) return -1;
 
-    print_maze(rows, columns);
-    printf("%d %d\n", rows, columns);
-
     // Apply a Depth First Search to generate a maze from initialized data
     dfs();
+
+    print_maze();
 
     return 0;
 }
 
+/* Handles validating inputs from the command line.  Returns true if invalid input is encountered.
+ *
+ * TODO: Potential improvements
+ * - Provide warnings for non int/long style data types
+ * - Handle for non standard input/mixed data types 
+ * - Use better function than atoi to perform conversion
+ */
+bool validateInputs(int argc, char* argv[]) {
+    // Check for number of arguments
+    if(argc != 3) {
+        printf("Please pass 2 command line arguments\n");
+        return true;
+    }
+
+    // Convert numbers
+    int rows = atoi(argv[1]);
+    int columns = atoi(argv[2]);
+
+    // Validate conversion produced valid values
+    if(rows <=0 || columns <=0) {
+        printf("Invalid input, please input two positive and even numbers");
+        return false;
+    }
+
+    if((rows % 2) == 0 || (columns % 2) == 0) {
+        printf("Invlaid input, please input an odd number");
+        return false;
+    }
+
+    return true;
+}
+
+/* Initializes the maze, and all the nodes in it
+ */
 int maze_init() {
 
     // Allocate memory for storing nodes
     maze_ptr = (struct Node*)malloc((rows * columns) * sizeof(struct Node));
 
-    // Ensure malloc call was sucessful
+    // Ensure malloc call was sucessful. Return -1 if it was unsuccessful
     if (maze_ptr == NULL) return -1;
 
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
+    // Initialize all Nodes in the maze array
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < columns; c++)  {
             node_init(r, c);
         }
     }
+
+    // Return success
     return 0;
 }
 
@@ -87,14 +123,17 @@ int maze_init() {
  *  by a space.
  */
 void print_maze() {
-
+    // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
+    // Iterate through maze and print the character associated with is_path
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < columns; c++)  {
             if(maze[r][c].is_path) {
-                printf("Z");
+                // Print path character
+                printf(" ");
             } else {
+                // Print wall character
                 printf("|");
             }
         }
@@ -106,7 +145,11 @@ void print_maze() {
  * This function initializes a node with the appropriate value.
  */
 void node_init(unsigned int row, unsigned int column) {
+    
+    // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
+
+    // Check if a Node is a seed, and assign values accordingly
     if (is_seed(row, column)) {
         maze[row][column].row = row;
         maze[row][column].col = column;
