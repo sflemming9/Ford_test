@@ -16,5 +16,4 @@
 
 * Future Testing Considerations
 - A unit testing framework would be a good addition
-- Individually testing the functions, rather than just the final executable would be a good next
-  step
+- Individually testing the functions, rather than just the final executable

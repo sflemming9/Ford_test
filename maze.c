@@ -23,18 +23,19 @@ static unsigned int rows = 0;
 static unsigned int columns = 0;
 
 /* Function prototypes */
-bool validateInputs(int argc, char* argv[]);
-int maze_init();
-void print_maze();
-void node_init(unsigned int row, unsigned int column);
-bool is_seed(unsigned int row, unsigned int column);
-void dfs();
-bool equals(struct Node n1, struct Node n2);
-bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
+static bool validateInputs(int argc, char* argv[]);
+static int maze_init();
+static void print_maze();
+static void node_init(unsigned int row, unsigned int column);
+static bool is_seed(unsigned int row, unsigned int column);
+static void dfs();
+static bool equals(struct Node n1, struct Node n2);
+static bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
         struct Node curr_node);
-int midpoint(int a, int b);
-void set_start_end();
-bool is_corner(int row, int col);
+static int midpoint(int a, int b);
+static void set_start_end();
+static bool is_corner(int row, int col);
+static bool is_even(int num);
 
 
 /*
@@ -75,7 +76,7 @@ int main(int argc, char* argv[]) {
  * - Handle for non standard input/mixed data types
  * - Use better function than atoi to perform conversion
  */
-bool validateInputs(int argc, char* argv[]) {
+static bool validateInputs(int argc, char* argv[]) {
 
     // Check for number of arguments
     if (argc != 3) {
@@ -104,7 +105,7 @@ bool validateInputs(int argc, char* argv[]) {
 /*
  * Initializes the maze, and all the nodes in it.
  */
-int maze_init() {
+static int maze_init() {
 
     // Allocate memory for storing nodes
     // This memory is not freed because it is required until the program completes
@@ -130,7 +131,7 @@ int maze_init() {
  *  This function prints out the maze. A wall is represented by a '|' and a path is represented
  *  by a space.
  */
-void print_maze() {
+static void print_maze() {
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
@@ -152,7 +153,7 @@ void print_maze() {
 /*
  * This function initializes a node at location row,column with the appropriate value.
  */
-void node_init(unsigned int row, unsigned int column) {
+static void node_init(unsigned int row, unsigned int column) {
 
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
@@ -176,7 +177,7 @@ void node_init(unsigned int row, unsigned int column) {
  *  matrix in this manner so that a DFS can be performed without creating large open blocks in the
  *  maze, and ensuring that a solution can always be found for a given start and end.
  */
-bool is_seed(unsigned int row, unsigned int column) {
+static bool is_seed(unsigned int row, unsigned int column) {
     return ((row % 2) && (column % 2));
 }
 
@@ -187,7 +188,7 @@ bool is_seed(unsigned int row, unsigned int column) {
  * - Make dfs take arguments for where you want the dfs to start, and validate those arguments
  * - Keep track of the optimal path for a given start and end coord (assuming they're on the) edges
  */
-void dfs() {
+static void dfs() {
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
@@ -259,7 +260,7 @@ void dfs() {
 /*
  *  Handles finding the midpoint between two integers, a and b.
  */
-int midpoint(int a, int b) {
+static int midpoint(int a, int b) {
     return a + ((b - a) / 2);
 }
 
@@ -267,7 +268,7 @@ int midpoint(int a, int b) {
  * Handles getting offsets from a curr_node based on a rand val. that provides direction of offset.
  * Populates data into row_offset and col_offset.
  */
-bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
+static bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
         struct Node curr_node) {
 
     if (rand_val == 2  && ((curr_node.col - 2) >= 0)) {
@@ -294,11 +295,11 @@ bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned in
 /*
  * Checks for locational equality between nodes
  */
-bool equals(struct Node n1, struct Node n2) {
+static bool equals(struct Node n1, struct Node n2) {
     return n1.row == n2.row && n1.col == n2.col;
 }
 
-void set_start_end() {
+static void set_start_end() {
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
@@ -311,7 +312,7 @@ void set_start_end() {
     do {
         start_row = (rand() % 2) ? 0 : rows - 1;
         start_col = rand() % columns;
-    } while (is_corner(start_row, start_col));    // Do not want to place start in a corner
+    } while (is_corner(start_row, start_col) || (is_even(start_col)));    // Do not want to place start in a corner
 
 
     int end_row;
@@ -320,7 +321,7 @@ void set_start_end() {
     do {
         end_row = rand() % rows;
         end_col = (rand() % 2) ? 0 : columns - 1;
-    } while (is_corner(end_row, end_col));      // Do not want to place end in a corner
+    } while (is_corner(end_row, end_col) || (is_even(end_row)));      // Do not want to place end in a corner
 
     maze[start_row][start_col].is_path = 1;
     maze[end_row][end_col].is_path = 1;
