@@ -24,5 +24,27 @@ clean:
 	rm *.o maze
 
 # Testing make rules
-run: maze
-	./maze 5 7 
+all_test: small_test_square medium_test_square large_test_square 
+
+# All Valid tests
+small_test_square: maze
+	$(info Running Small Square test)
+	./maze 7 7 
+medium_test_square: maze
+	$(info )
+	$(info Running Medium Square test)
+	./maze 21 21
+large_test_square: maze
+	$(info )
+	$(info Running Large Square test)
+	./maze 75 75
+
+# All invalid tests (run individually)
+even_args_test: maze
+	$(info )
+	$(info Running invalid args test)
+	./maze 6 8
+too_few_args_test: maze
+	$(info )
+	$(info Running too few args test)
+	./maze 3

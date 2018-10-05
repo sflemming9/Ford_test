@@ -1,31 +1,51 @@
+/* 
+ * Handles major functionality for the Maze problem posed by Ford.
+ *
+ * High level requirements: 
+ * 1. Maze must have a solution
+ * 2. Maze must have a start and end
+ */
+
+/*  Headers */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
 #include "node.h"
 
-#define CHECK_BIT(var, pos) (var & (1 << pos))
+/* Macros */
+/* 
+ * Checks if a bit has been set. Returns true if it has, false if it hasn't*/
+#define CHECK_BIT(var, pos) (var & (1 << pos)) 
 
 /* Global variables */
-static struct Node* maze_ptr;
+static struct Node* maze_ptr; // Stores all the nodes that comprise the maze
 static unsigned int rows = 0;
 static unsigned int columns = 0;
 
 /* Function prototypes */
+bool validateInputs(int argc, char* argv[]);
 int maze_init();
 void print_maze();
 void node_init(unsigned int row, unsigned int column);
 bool is_seed(unsigned int row, unsigned int column);
 void dfs();
+bool equals(struct Node n1, struct Node n2);
+bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
+        struct Node curr_node);
+int midpoint(int a, int b);
+
 
 /* Handles running and displaying the maze problem
  *
  * Author: Sabrina Flemming
- * */
-int main(int argc, char *argv[]) {
+ * TODO: Potential improvements
+ * - Take flags from command line that modify execution (eg: higher amount of logging)
+ */
+int main(int argc, char* argv[]) {
 
-    // TODO Validate inputs for correct number of arguments, convertability, 0, negative,
-    // and size
+    // Validate inputs for correct number of arguments, convertability, 0, negative, and size
+    if(!validateInputs(argc, argv)) return -1;
 
     // Initialize rows and columns; atoi is safe because we handled checking our inputs above
     rows = atoi(argv[1]);
