@@ -11,9 +11,9 @@
  * Author: Sabrina Flemming
  * */
 struct Node {
-    struct Node* prev;
+    struct Node* prev;  // Represents the parent node
     int row; 
     int col;
-    unsigned int is_path;
+    unsigned int is_path;   // 1: yes it is part of the path; 0: no it is a wall
     unsigned int bit_directs : 5; // Bit packed field representing directions visted
 };
