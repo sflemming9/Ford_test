@@ -172,7 +172,7 @@ static void print_maze() {
  * This function initializes a node at location row,column with the appropriate value. The nodes are
  * differentiated on whether or not they are a 'seed node'. A seed node is a node that has odd
  * numbers for its row,column and is also not along the edges of the maze. This creates a
- * checkerboard type maze to allow for dfs to generate a full maze. 
+ * checkerboard type maze to allow for dfs to generate a full maze.
  */
 static void node_init(unsigned int row, unsigned int column) {
 
@@ -182,7 +182,7 @@ static void node_init(unsigned int row, unsigned int column) {
     // Assign the location of the node
     maze[row][column].row = row;
     maze[row][column].col = column;
-    
+
     maze[row][column].bit_directs = 15;     // Initialize all directions as visited
 
     // Check if a Node is a seed, and assign values accordingly
@@ -234,21 +234,20 @@ static void dfs() {
     srand(time(NULL));
 
     do {
-        // Check for path
         unsigned int* row_offset = malloc(sizeof(unsigned int));
         unsigned int* col_offset= malloc(sizeof(unsigned int));
 
-        // Whle the current node being examined has unexplored directions
+        // While the current node being examined has unexplored directions
         while (curr_node->bit_directs) {
 
             // Randomly choose a direction (up, down, right, left)
             int rand_val = rand() % 4;     // Random value between 0 and 3
 
-            // Check If this direction explored
+            // Check if this direction has already been explored - if so, continue
             if (!CHECK_BIT(curr_node->bit_directs, rand_val)) continue;
 
-            // This direction has not been explored. Set as explored
-            curr_node->bit_directs &= ~(1 << rand_val);
+            // This direction has not been explored, therefore now set as explored
+            curr_node->bit_directs ^= (1 << rand_val);
 
             // Get new row and column coordinates for next node in the direction of exploration
             // If getOfsset encounters a wall (returns false), continue
@@ -260,13 +259,13 @@ static void dfs() {
             if (next_node->is_path) {
 
                 // If the next node has alreay been added to the path do not process further
-                if(next_node->prev != NULL) continue;
+                if (next_node->prev != NULL) continue;
 
                 // Set prev of the next node to be the curr_node
                 next_node->prev = curr_node;
 
                 // Add connecting node to path
-                if(curr_node->row - next_node->row == 0) {
+                if (curr_node->row - next_node->row == 0) {
                     // Row is shared between curr_node and next_node
                     int new_col = midpoint(curr_node->col, next_node->col);
                     maze[*row_offset][new_col].is_path = 1;
@@ -287,35 +286,44 @@ static void dfs() {
         free(row_offset);
         free(col_offset);
 
-    } while (!equals(*curr_node, *start));
+    } while (!equals(*curr_node, *start));  // Continue until we have backtracked all the way to start
 }
 
 /*
- *  Handles finding the midpoint between two integers, a and b.
+ * Function: midpoint
+ * ----------------------------------------------------------------------
+ * Returns the midpoint between two integers, a and b.
  */
 static int midpoint(int a, int b) {
     return a + ((b - a) / 2);
 }
 
 /*
- * Handles getting offsets from a curr_node based on a rand val. that provides direction of offset.
- * Populates data into row_offset and col_offset.
+ * Function: get_offsets
+ * ----------------------------------------------------------------------
+ * Handles getting offsets for the next node from the curr_node. The direction to explore is based
+ * on a random value (between 0 and 3) that provides direction of offset. Populates data into
+ * row_offset and col_offset.
  */
 static bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsigned int rand_val,
         struct Node curr_node) {
 
-    if (rand_val == 2  && ((curr_node.col - 2) >= 0)) {
+    if (rand_val == 2  && ((curr_node.col - 2) >= 0)) {     // Explore Left if possible
         *row_offset = curr_node.row;
         *col_offset = curr_node.col - 2;
-    } else if(rand_val == 3 && ((curr_node.row - 2) >= 0)) {
+
+    } else if(rand_val == 3 && ((curr_node.row - 2) >= 0)) {    // Explore Up if possible
         *row_offset = curr_node.row - 2;
         *col_offset = curr_node.col;
-    } else if(rand_val == 0 && ((curr_node.col + 2) < ROWS)) {
+
+    } else if(rand_val == 0 && ((curr_node.col + 2) < ROWS)) {  // Explore Right if possible
         *row_offset = curr_node.row;
         *col_offset = curr_node.col + 2;
-    } else if(rand_val == 1 && ((curr_node.row + 2) < COLUMNS)) {
+
+    } else if(rand_val == 1 && ((curr_node.row + 2) < COLUMNS)) {   // Explore Down if possible
         *row_offset = curr_node.row + 2;
         *col_offset = curr_node.col;
+
     } else {
         // Return a failure to populate any offsets
         return false;
@@ -326,12 +334,24 @@ static bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsi
 }
 
 /*
- * Checks for locational equality between nodes
+ * Function: equals
+ * ----------------------------------------------------------------------
+ * Checks for locational equality between two nodes. Returns true if they are equal and false
+ * otherwise.
  */
 static bool equals(struct Node n1, struct Node n2) {
     return n1.row == n2.row && n1.col == n2.col;
 }
 
+/*
+ * Function: set_start_end
+ * ----------------------------------------------------------------------
+ * This function assigns the starting and ending nodes, both of which will always be located along
+ * an edge but cannot be located in a corner. The start node will always be located along the upper
+ * or bottom edge of the maze and must be placed in an odd column (to ensure a solution). The end
+ * node will always be located along the left or right edge, and myst be placed in an odd row
+ * of the maze (to ensure a solution).
+ * */
 static void set_start_end() {
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[COLUMNS] = (struct Node (*)[COLUMNS])(maze_ptr);
@@ -345,7 +365,7 @@ static void set_start_end() {
     do {
         start_row = (rand() % 2) ? 0 : ROWS - 1;
         start_col = rand() % COLUMNS;
-    } while (is_corner(start_row, start_col) || (is_even(start_col)));    // Do not want to place start in a corner
+    } while (is_corner(start_row, start_col) || (is_even(start_col)));
 
 
     int end_row;
@@ -354,15 +374,18 @@ static void set_start_end() {
     do {
         end_row = rand() % ROWS;
         end_col = (rand() % 2) ? 0 : COLUMNS - 1;
-    } while (is_corner(end_row, end_col) || (is_even(end_row)));      // Do not want to place end in a corner
+    } while (is_corner(end_row, end_col) || (is_even(end_row)));
 
+    // Mark the start and end nodes as part of the path
     maze[start_row][start_col].is_path = 1;
     maze[end_row][end_col].is_path = 1;
 }
 
 /*
- *  This function will return true if the inputted row,col coordinates correspond to a corner in the
- *  maze.
+ * Function: is_corner
+ * ----------------------------------------------------------------------
+ * This function will return true if the inputted row,col coordinates correspond to a corner in the
+ * maze, otherwise it will return false.
  */
 static bool is_corner(int row, int col) {
     return (((row == 0) && (col == 0)) || ((row == ROWS - 1) && (col == 0))
@@ -370,6 +393,11 @@ static bool is_corner(int row, int col) {
             || ((row == ROWS - 1) && (col == COLUMNS - 1)));
 }
 
+/*
+ * Function: is_even
+ * ----------------------------------------------------------------------
+ * This function will return true if the inputted number is even, and return false if it is odd.
+ * */
 static bool is_even(int num) {
     return !(num % 2);
 }
