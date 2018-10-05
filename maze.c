@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include "node.h"
+
+#define CHECK_BIT(var, pos) (var & (1 << pos))
 
 /* Global variables */
 static struct Node* maze_ptr;
@@ -13,6 +16,7 @@ int maze_init();
 void print_maze();
 void node_init(unsigned int row, unsigned int column);
 bool is_seed(unsigned int row, unsigned int column);
+void dfs();
 
 /* Handles running and displaying the maze problem
  *
@@ -50,12 +54,9 @@ int maze_init() {
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
-    // For examining an individual node
-    struct Node n;
-
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < columns; j++)  {
-            node_init(i, j);
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < columns; c++)  {
+            node_init(r, c);
         }
     }
     return 0;
@@ -69,9 +70,9 @@ void print_maze() {
 
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
 
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < columns; j++)  {
-            if(maze[i][j].is_path) {
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < columns; c++)  {
+            if(maze[r][c].is_path) {
                 printf("Z");
             } else {
                 printf("|");
