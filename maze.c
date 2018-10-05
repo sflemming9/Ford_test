@@ -8,7 +8,7 @@ static struct Node* maze_ptr;
 static unsigned int rows = 0;
 static unsigned int columns = 0;
 
-/*  Function prototypes */
+/* Function prototypes */
 int maze_init();
 void print_maze();
 void node_init(unsigned int row, unsigned int column);
@@ -28,10 +28,14 @@ int main(int argc, char *argv[]) {
     columns = atoi(argv[2]);
 
     // Initialize the maze
-    maze_init(rows, columns);
+    if (maze_init(rows, columns)) return -1;
 
     print_maze(rows, columns);
     printf("%d %d\n", rows, columns);
+
+    // Apply a Depth First Search to generate a maze from initialized data
+    dfs();
+
     return 0;
 }
 
@@ -39,6 +43,9 @@ int maze_init() {
 
     // Allocate memory for storing nodes
     maze_ptr = (struct Node*)malloc((rows * columns) * sizeof(struct Node));
+
+    // Ensure malloc call was sucessful
+    if (maze_ptr == NULL) return -1;
 
     // Create maze to treat maze_ptr as a multi dimensional array
     struct Node (*maze)[columns] = (struct Node (*)[columns])(maze_ptr);
@@ -72,7 +79,6 @@ void print_maze() {
         }
         printf("\n");
     }
-
 }
 
 /*
@@ -97,4 +103,14 @@ void node_init(unsigned int row, unsigned int column) {
  */
 bool is_seed(unsigned int row, unsigned int column) {
     return ((row % 2) && (column % 2));
+}
+
+void dfs() {
+    // Declare start and end
+    // Randomly choose start
+    // While end != start
+    //      Check to see if path can be made between two nodes separated by an adjacent node
+    //      If path can be made, connect the two nodes and assign end = node that was connected to
+    //      else assign end = node that came before the current node to backtrack
+
 }
