@@ -1,6 +1,6 @@
 /*
  * Handles major functionality for the Maze generation problem posed by Ford.
- * A square maze is generated using a depth first search algorithm.
+ * A rectangular maze is generated using a depth first search algorithm.
  *
  * High level requirements:
  * 1. Maze must have a solution
@@ -44,13 +44,13 @@ static bool is_even(int num);
 
 
 /*
- * Handles running and displaying the maze problem. One command line argument is expected (the
- * size of the square maze). See Compiling_and_Running.org file for further instructions.
+ * Handles running and displaying the maze problem. Two command line arguments are expected
+ * (number of rows, number of columns).
+ * See Compiling_and_Running.org file for further instructions.
  *
  * Potential improvements:
  * - Take flags from command line that modify execution (eg: higher amount of logging)
  * - Handle mazes with an even number of rows and columns
- * - Handle rectangular size mazes
  */
 int main(int argc, char* argv[]) {
 
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 
     // Initialize rows and columns; atoi is safe because we handled checking our inputs above
     ROWS = atoi(argv[1]);
-    COLUMNS = atoi(argv[2]); //TODO
+    COLUMNS = atoi(argv[2]); 
 
     // Initialize the maze
     if (maze_init(ROWS, COLUMNS)) return -1;
@@ -90,24 +90,24 @@ int main(int argc, char* argv[]) {
 static bool validateInputs(int argc, char* argv[]) {
 
     // Check for number of arguments
-    if (argc != 3) { //TODO
-        printf("Please pass 1 command line arguments: the size of the maze.\n");
+    if (argc != 3) {
+        printf("Please pass 2  command line arguments: the number of rows and columns in the maze.\n");
         return false;
     }
 
     // Convert numbers
     int rows = atoi(argv[1]);
-    int columns = atoi(argv[2]); // TODO
+    int columns = atoi(argv[2]);
 
     // Validate conversion produced valid values
     if (rows <= 0 || columns <= 0) {
-        printf("Invalid input, please input one positive, odd number.\n");
+        printf("Invalid input, please input two positive, odd numbers.\n");
         return false;
     }
 
     // Number of rows and columns of maze must be odd
     if ((rows % 2) == 0 || (columns % 2) == 0) {
-        printf("Invlaid input, please input an odd number.\n");
+        printf("Invlaid input, please input two positive, odd numbers.\n");
         return false;
     }
 

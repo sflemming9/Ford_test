@@ -5,9 +5,9 @@ in such a way that it would be able to support a project with increased dependen
 the future.
 
 * Running 
-The program accepts one command line arguments as the size of the square maze the user wishes 
-to havie. The size must be an odd, non negative number. For example "./maze 11" will print a maze to
-the console.
+The program accepts two command line arguments as the number of rows and columns that the maze is  
+to have. The number of rows and columns must be odd, positive numbers. 
+For example "./maze 11 5" will print a maze to the console with 11 rows and 5 columns.
 
 * Testing
 See Testing_Considerations.org for more information on test cases. Valid test cases may be ran with

@@ -1,7 +1,7 @@
 * General Algorithm For Maze Generation
 
 Depth first search was chosen over Kruskal's as Kruskal's works with a weighted graph and works
-best with the priority queue data structure.
+best with the priority queue and set data structures.
 
 1. Take command line input of rows and columns
 2. Validate inputs
@@ -19,6 +19,6 @@ best with the priority queue data structure.
         1. Randomly pick a direction and mark it as explored (if it has not already been explored)
         2. Depending on the direction chosen check for a direciton that it is possible to go
     - Make sure the direction chosen does not lead into an edge or already have a parent
-    = Return node in direction chosen or parent's address if it has no other options. Returning the
+    - Return node in direction chosen or parent's address if it has no other options. Returning the
     address of parent will break out of this loop once all nodes have been visted
 

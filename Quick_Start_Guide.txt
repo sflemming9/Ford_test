@@ -1,5 +1,5 @@
 * To run the Code: these lines may be executed on any linux based terminal
-make; ./maze 5
+make; ./maze 5 7
 
 make all_test
 
