@@ -19,6 +19,7 @@ maze: $(OBJS)
 maze.o: maze.c 
 	$(CC) $(CFLAGS) -c maze.c
 
+
 # Build header file to use Node struct
 node.o: node.h
 	$(CC) $(CFLAGS) -c node.h

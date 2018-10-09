@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 
     // Initialize rows and columns; atoi is safe because we handled checking our inputs above
     ROWS = atoi(argv[1]);
-    COLUMNS = atoi(argv[1]);
+    COLUMNS = atoi(argv[2]); //TODO
 
     // Initialize the maze
     if (maze_init(ROWS, COLUMNS)) return -1;
@@ -90,14 +90,14 @@ int main(int argc, char* argv[]) {
 static bool validateInputs(int argc, char* argv[]) {
 
     // Check for number of arguments
-    if (argc != 2) {
+    if (argc != 3) { //TODO
         printf("Please pass 1 command line arguments: the size of the maze.\n");
         return false;
     }
 
     // Convert numbers
     int rows = atoi(argv[1]);
-    int columns = atoi(argv[1]);
+    int columns = atoi(argv[2]); // TODO
 
     // Validate conversion produced valid values
     if (rows <= 0 || columns <= 0) {
@@ -316,11 +316,11 @@ static bool get_offsets(unsigned int* row_offset, unsigned int* col_offset, unsi
         *row_offset = curr_node.row - 2;
         *col_offset = curr_node.col;
 
-    } else if(rand_val == 0 && ((curr_node.col + 2) < ROWS)) {  // Explore Right if possible
+    } else if(rand_val == 0 && ((curr_node.col + 2) < COLUMNS)) {  // Explore Right if possible
         *row_offset = curr_node.row;
         *col_offset = curr_node.col + 2;
 
-    } else if(rand_val == 1 && ((curr_node.row + 2) < COLUMNS)) {   // Explore Down if possible
+    } else if(rand_val == 1 && ((curr_node.row + 2) < ROWS)) {   // Explore Down if possible
         *row_offset = curr_node.row + 2;
         *col_offset = curr_node.col;
 
