@@ -29,43 +29,81 @@ clean:
 	rm *.o maze
 
 # Testing make rules
-all_test: small_square_test medium_square_test large_square_test doubles_square_test
+all_test: small_square_test small_rectangle_test medium_square_test \
+	medium_rectangle_test large_square_test large_rectangle_test \
+	doubles_arg1_test doubles_arg2_test
 
 # All Valid tests
 small_square_test: maze
 	$(info Running Small Square test)
-	./maze 7 
+	./maze 7 7
+small_rectangle_test: maze
+	$(info Running Small Square test)
+	./maze 7 9
 medium_square_test: maze
 	$(info )
 	$(info Running Medium Square test)
-	./maze 21
+	./maze 21 21
+medium_rectangle_test: maze
+	$(info )
+	$(info Running Medium Square test)
+	./maze 21 43
 large_square_test: maze
 	$(info )
 	$(info Running Large Square test)
-	./maze 75
-doubles_square_test: maze
+	./maze 75 75 
+large_rectangle_test: maze
+	$(info )
+	$(info Running Large Square test)
+	./maze 75 81
+doubles_arg1_test: maze
 	$(info )
 	$(info Running Square test with a double)
-	./maze 7.2
-
+	./maze 7.2 9
+doubles_arg2_test: maze
+	$(info )
+	$(info Running Square test with a double)
+	./maze 9 7.2
+	
 # All invalid tests (run individually)
-even_args_test: maze
+even_arg1_test: maze
 	$(info )
-	$(info Running even args test)
-	./maze 6
-negative_args_test: maze
+	$(info Running even arg1 test)
+	./maze 6 7
+even_arg2_test: maze
 	$(info )
-	$(info Running negative args test)
-	./maze  -5
-arg_not_convertable_test: maze
+	$(info Running even arg2 test)
+	./maze 7 6
+arg1_not_convertable_test: maze
+	$(info )
+	$(info Running invalid with first arg not number)
+	./maze foo 5
+arg2_not_convertable_test: maze
 	$(info )
 	$(info Running invalid with second arg not number)
-	./maze foo
+	./maze 1 foo
+negative_arg1_test: maze
+	$(info )
+	$(info Running negative arg1 test)
+	./maze  -5 7
+negative_arg2_test: maze
+	$(info )
+	$(info Running negative arg2 test)
+	./maze 7 -5
 many_args_test: maze
 	$(info )
 	$(info Running invalid with too many args)
-	./maze  7 7 
+	./maze  7 7 9
 too_few_args_test: maze
 	$(info )
 	$(info Running too few args test)
-	./maze 
+	./maze 3
+too_small_arg1_test: maze
+	$(info )
+	$(info Running too small arg1 test)
+	./maze 1 5
+too_small_arg2_test: maze
+	$(info )
+	$(info Running too small arg2 test)
+	./maze 5 1
+

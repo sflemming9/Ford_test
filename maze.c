@@ -100,14 +100,14 @@ static bool validateInputs(int argc, char* argv[]) {
     int columns = atoi(argv[2]);
 
     // Validate conversion produced valid values
-    if (rows <= 0 || columns <= 0) {
-        printf("Invalid input, please input two positive, odd numbers.\n");
+    if (rows <= 1 || columns <= 1) {
+        printf("Invalid input, please input two positive, odd numbers greater than 1.\n");
         return false;
     }
 
     // Number of rows and columns of maze must be odd
     if ((rows % 2) == 0 || (columns % 2) == 0) {
-        printf("Invlaid input, please input two positive, odd numbers.\n");
+        printf("Invlaid input, please input two positive, odd numbers greater than 1.\n");
         return false;
     }
 

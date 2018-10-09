@@ -6,7 +6,7 @@ the future.
 
 * Running 
 The program accepts two command line arguments as the number of rows and columns that the maze is  
-to have. The number of rows and columns must be odd, positive numbers. 
+to have. The number of rows and columns must be odd, positive numbers greater than 1.
 For example "./maze 11 5" will print a maze to the console with 11 rows and 5 columns.
 
 * Testing
