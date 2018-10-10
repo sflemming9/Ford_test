@@ -22,7 +22,7 @@
 /* Checks if a bit has been set. Returns true if it has, false if it hasn't. */
 #define CHECK_BIT(var, pos) (var & (1 << pos))
 
-/* Global variables */
+/* Module variables */
 static struct Node* maze_ptr; // Stores all the nodes that comprise the maze
 static unsigned int ROWS = 0;   // Number of rows in the maze
 static unsigned int COLUMNS = 0;    // Number of columns in the maze
