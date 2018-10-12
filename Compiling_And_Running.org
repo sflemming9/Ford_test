@@ -3,6 +3,7 @@ Please use the provided makefile. The command "make" will compile an executable 
 "make clean" provides the usual behaviour of erasing all compiled files. The makefile was structed
 in such a way that it would be able to support a project with increased dependency and complexity in
 the future.
+
 The project is compiled using the provided makefile to build object files that are then compiled
 into the final executable. Makefile was used to reduce repeat work when compiling and testing code,
 as well as to provide future extensibility and flexibility of the project.
