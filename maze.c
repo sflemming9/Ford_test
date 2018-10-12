@@ -1,5 +1,5 @@
 /*
- * Handles major functionality for the Maze generation problem posed by Ford.
+ * Handles major functionality for the Maze generation problem.
  * A rectangular maze is generated using a depth first search algorithm.
  *
  * High level requirements:
