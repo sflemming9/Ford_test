@@ -3,6 +3,10 @@ Please use the provided makefile. The command "make" will compile an executable 
 "make clean" provides the usual behaviour of erasing all compiled files. The makefile was structed
 in such a way that it would be able to support a project with increased dependency and complexity in
 the future.
+The project is compiled using the provided makefile to build object files that are then compiled
+into the final executable. Makefile was used to reduce repeat work when compiling and testing code,
+as well as to provide future extensibility and flexibility of the project.
+
 
 * Running 
 The program accepts two command line arguments as the number of rows and columns that the maze is  
@@ -16,8 +20,3 @@ cases were written as I am not familiar with a good C testing framework, and the
 budget for the assignment did not allow me sufficient time to learn one. In the future I would 
 prioritize unit and functional testing. The makefile is used to run test cases due to it's ease 
 of use, and that it was to be found on most computers that this program could be ran on.
-
-* Compiling
-The project is compiled using the provided makefile to build object files that are then compiled
-into the final executable. Makefile was used to reduce repeat work when compiling and testing code,
-as well as to provide future extensibility and flexibility of the project.
